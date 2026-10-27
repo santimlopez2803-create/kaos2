@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block titulo %}Carrito — KAOS{% endblock %}
+{% block contenido %}
+<div class="pagina">
+  <h1>Tu carrito</h1>
+  <div class="caja">
+    {% for item in carrito.items() %}
+      <div class="linea">
+        <img src="{{ url_for('static', filename=item.imagen) }}" alt="">
+        <div>
+          <b>{{ item.nombre }}</b><br>
+          <small>{% if item.talla %}Talla {{ item.talla }}{% endif %} {{ item.color }}</small>
+        </div>
+        <b>{{ item.precio|cop }}</b>
+        <form method="post" action="{{ url_for('quitar', posicion=loop.index0) }}">
+          <button title="Quitar">✕</button>
+        </form>
+      </div>
+    {% else %}
+      <p>Tu carrito está vacío. Hay mucho KAOS por descubrir.</p>
+    {% endfor %}
+
+    {% if carrito.cantidad() > 0 %}
+      <div class="total"><span>Total</span><span>{{ carrito.total()|cop }}</span></div>
+      <a class="boton" href="{{ url_for('hacer_pedido') }}">Finalizar compra</a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

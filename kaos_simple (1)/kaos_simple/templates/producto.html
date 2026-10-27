@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block titulo %}{{ p.nombre }} — KAOS{% endblock %}
+{% block contenido %}
+<div class="pagina" style="max-width:950px">
+  <div class="detalle">
+    <img src="{{ url_for('static', filename=p.imagen) }}" alt="{{ p.nombre }}">
+    <div>
+      <small>{{ p.categoria }}</small>
+      <h1>{{ p.nombre }}</h1>
+      <h2>{{ p.precio|cop }}
+        {% if p.en_oferta() %}<del style="font-size:16px;color:var(--gris)">{{ p.precio_anterior|cop }}</del>{% endif %}</h2>
+      <p>{{ p.descripcion }}</p>
+      <p>Disponibles: {{ p.stock }}</p>
+
+      <form method="post" action="{{ url_for('agregar', id=p.id) }}">
+        {% if p.categoria == "Camisetas" %}
+          <label><b>Talla</b></label>
+          <select name="talla"><option>S</option><option selected>M</option><option>L</option><option>XL</option></select>
+        {% endif %}
+        <p><button class="boton" type="submit">Agregar al carrito</button></p>
+      </form>
+      <a href="{{ url_for('inicio') }}#tienda">← Seguir viendo diseños</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

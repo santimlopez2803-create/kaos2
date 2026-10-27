@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block titulo %}Crear cuenta — KAOS{% endblock %}
+{% block contenido %}
+<div class="pagina" style="max-width:460px">
+  <h1>Crear cuenta</h1>
+  <form class="caja" method="post">
+    <label>Nombre</label>
+    <input name="nombre" required>
+    <label>Correo</label>
+    <input type="email" name="email" required>
+    <label>Contraseña</label>
+    <input type="password" name="clave" required minlength="6">
+    <button class="boton" type="submit">Crear cuenta</button>
+    <p>¿Ya tienes cuenta? <a href="{{ url_for('login') }}"><b>Ingresar</b></a></p>
+  </form>
+</div>
+{% endblock %}

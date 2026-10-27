@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+{% block contenido %}
+
+<!-- PORTADA -->
+<section class="portada">
+  <div class="contenedor">
+    <div>
+      <h1>Viste tu<br><span>propio kaos.</span></h1>
+      <p>Prendas que hablan por ti. Elige uno de nuestros diseños o crea algo completamente tuyo.</p>
+      <div class="botones">
+        <a class="boton" href="#tienda">Ver colección</a>
+        <a class="boton claro" href="#personaliza">Crear mi diseño</a>
+      </div>
+    </div>
+    <div class="foto">
+      <img src="{{ url_for('static', filename='img/black-sheep.jpg') }}" alt="Black Sheep">
+    </div>
+  </div>
+</section>
+
+<!-- DESTACADOS: tira que se desliza hacia los lados -->
+<section>
+  <div class="contenedor">
+    <h2>Lo más pedido</h2>
+    <div class="tira">
+      {% for p in destacados %}
+        <a href="{{ url_for('producto', id=p.id) }}">
+          <img src="{{ url_for('static', filename=p.imagen) }}" alt="{{ p.nombre }}">
+          <span>{{ p.nombre }}</span>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- TIENDA -->
+<section id="tienda">
+  <div class="contenedor">
+    <h2>Todos los diseños</h2>
+    <div class="filtros">
+      {% for c in categorias %}
+        <a class="{{ 'activo' if c == categoria }}" href="{{ url_for('inicio', categoria=c) }}#tienda">{{ c }}</a>
+      {% endfor %}
+      <form method="get" action="{{ url_for('inicio') }}#tienda">
+        <input type="hidden" name="categoria" value="{{ categoria }}">
+        <input type="text" name="q" value="{{ q }}" placeholder="Buscar diseño...">
+      </form>
+    </div>
+
+    <div class="cuadricula">
+      {% for p in productos %}
+        <div class="tarjeta">
+          <a href="{{ url_for('producto', id=p.id) }}">
+            <img src="{{ url_for('static', filename=p.imagen) }}" alt="{{ p.nombre }}">
+          </a>
+          <div class="info">
+            <small>{{ p.categoria }}</small>
+            <h3>{{ p.nombre }}</h3>
+            <div class="precio">
+              {{ p.precio|cop }}
+              {% if p.en_oferta() %}<del>{{ p.precio_anterior|cop }}</del> <span class="etiqueta">Oferta</span>{% endif %}
+            </div>
+          </div>
+        </div>
+      {% else %}
+        <p>No encontramos diseños con ese nombre.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ESTUDIO KAOS: personalizar -->
+<section id="personaliza">
+  <div class="contenedor">
+    <div class="estudio">
+      <div class="vista">
+        <!-- Maqueta: el dibujo (SVG) cambia según producto y color; la estampa va encima -->
+        <div class="maqueta" id="maqueta" data-producto="Camiseta">
+          <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <linearGradient id="sombra" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#fff" stop-opacity=".18"/>
+                <stop offset="1" stop-color="#000" stop-opacity=".22"/>
+              </linearGradient>
+              <linearGradient id="sombra-taza" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#000" stop-opacity=".22"/>
+                <stop offset=".3" stop-color="#fff" stop-opacity=".18"/>
+                <stop offset="1" stop-color="#000" stop-opacity=".28"/>
+              </linearGradient>
+              <path id="forma-camiseta" d="M100 40 L60 55 L18 105 L55 132 L80 108 L80 262 L220 262 L220 108 L245 132 L282 105 L240 55 L200 40 Q150 72 100 40 Z"/>
+              <path id="forma-corona" d="M62 175 C62 90 100 55 150 55 C200 55 238 90 238 175 Z"/>
+              <path id="forma-visera" d="M40 178 C90 160 210 160 260 178 C262 215 200 232 150 232 C100 232 38 215 40 178 Z"/>
+              <path id="forma-taza" d="M70 70 L70 238 A70 14 0 0 0 210 238 L210 70 Z"/>
+            </defs>
+
+            <!-- CAMISETA -->
+            <g id="m-Camiseta">
+              <use href="#forma-camiseta" class="tela"/>
+              <use href="#forma-camiseta" fill="url(#sombra)"/>
+              <path d="M100 40 Q150 72 200 40" class="linea-fina" stroke-width="4"/>
+              <path d="M104 46 Q150 80 196 46" class="linea-fina"/>
+              <path d="M80 108 Q86 80 100 42" class="linea-fina"/>
+              <path d="M220 108 Q214 80 200 42" class="linea-fina"/>
+            </g>
+
+            <!-- GORRA -->
+            <g id="m-Gorra">
+              <use href="#forma-visera" class="tela"/>
+              <use href="#forma-visera" fill="#000" fill-opacity=".2"/>
+              <path d="M52 182 C100 168 200 168 248 182" class="linea-fina"/>
+              <use href="#forma-corona" class="tela"/>
+              <use href="#forma-corona" fill="url(#sombra)"/>
+              <path d="M150 58 L150 175" class="linea-fina"/>
+              <path d="M150 58 Q108 100 104 175" class="linea-fina"/>
+              <path d="M150 58 Q192 100 196 175" class="linea-fina"/>
+              <circle cx="150" cy="55" r="7" class="tela"/>
+            </g>
+
+            <!-- TAZA -->
+            <g id="m-Taza">
+              <path d="M210 105 C268 98 272 207 205 205" fill="none" stroke="rgba(0,0,0,.28)" stroke-width="24" stroke-linecap="round"/>
+              <path d="M210 105 C268 98 272 207 205 205" class="tela-trazo" fill="none" stroke-width="18" stroke-linecap="round"/>
+              <use href="#forma-taza" class="tela"/>
+              <use href="#forma-taza" fill="url(#sombra-taza)"/>
+              <ellipse cx="140" cy="70" rx="70" ry="14" class="tela"/>
+              <ellipse cx="140" cy="70" rx="63" ry="10" fill="#000" fill-opacity=".25"/>
+            </g>
+          </svg>
+
+          <!-- Zona de estampado (JS la llena con el dibujo y la frase) -->
+          <div class="estampa" id="prenda"></div>
+        </div>
+        <p>Vista previa: <b id="nombre-prenda">Camiseta</b></p>
+      </div>
+
+      <form method="post" action="{{ url_for('personalizar') }}">
+        <h2>Crea algo que sea tuyo</h2>
+        <p>Lo imprimimos con calidad premium y lo enviamos a tu puerta.</p>
+
+        <label>1. Producto</label>
+        <select name="producto" id="producto">
+          <option>Camiseta</option><option>Gorra</option><option>Taza</option>
+        </select>
+
+        <label>2. Color</label>
+        <div class="muestras" id="muestras">
+          <label class="muestra" title="Negro"><input type="radio" name="color" value="Negro" data-hex="#111111" checked><span style="background:#111111"></span></label>
+          <label class="muestra" title="Blanco"><input type="radio" name="color" value="Blanco" data-hex="#ffffff"><span style="background:#ffffff"></span></label>
+          <label class="muestra" title="Gris"><input type="radio" name="color" value="Gris" data-hex="#8d8d8d"><span style="background:#8d8d8d"></span></label>
+          <label class="muestra" title="Azul"><input type="radio" name="color" value="Azul" data-hex="#1e4d90"><span style="background:#1e4d90"></span></label>
+          <label class="muestra" title="Rojo"><input type="radio" name="color" value="Rojo" data-hex="#c62828"><span style="background:#c62828"></span></label>
+          <label class="muestra" title="Verde"><input type="radio" name="color" value="Verde" data-hex="#2e7d32"><span style="background:#2e7d32"></span></label>
+          <label class="muestra" title="Amarillo"><input type="radio" name="color" value="Amarillo" data-hex="#f4c20d"><span style="background:#f4c20d"></span></label>
+          <label class="muestra" title="Rosado"><input type="radio" name="color" value="Rosado" data-hex="#e8789a"><span style="background:#e8789a"></span></label>
+        </div>
+
+        <div id="fila-talla">
+          <label>3. Talla</label>
+          <select name="talla"><option>S</option><option selected>M</option><option>L</option><option>XL</option></select>
+        </div>
+
+        <label>4. Diseño</label>
+        <select name="grafico" id="grafico">
+          <option value="">Solo frase</option>
+          <option>Rayo</option><option>Estrella</option><option>Corazón</option>
+          <option>Llama</option><option>Carita</option><option>Corona</option>
+        </select>
+
+        <label>5. Tu frase</label>
+        <input type="text" name="texto" id="texto" maxlength="25" value="ROMPE LAS REGLAS">
+
+        <label>6. Color de la frase</label>
+        <select name="color_texto" id="color-texto">
+          <option>Automático</option><option>Blanco</option><option>Negro</option>
+          <option>Amarillo</option><option>Rojo</option>
+        </select>
+
+        <p style="margin-top:18px">Desde <b>{{ precio_personalizado|cop }}</b></p>
+        <button class="boton oscuro" type="submit">Agregar al carrito</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

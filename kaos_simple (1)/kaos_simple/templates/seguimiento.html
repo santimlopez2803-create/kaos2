@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block titulo %}Seguir pedido — KAOS{% endblock %}
+{% block contenido %}
+<div class="pagina">
+  <h1>Sigue tu pedido</h1>
+  <form class="caja" method="get">
+    <label>Código del pedido (ejemplo: KA-2001)</label>
+    <input name="codigo" value="{{ codigo }}">
+    <button class="boton" type="submit">Buscar</button>
+  </form>
+
+  {% if pedido %}
+    <div class="caja" style="margin-top:20px">
+      <h2>{{ pedido.codigo }} — {{ pedido.estado }}</h2>
+      <p>{{ pedido.resumen() }}</p>
+      <p>Total: <b>{{ pedido.total|cop }}</b> · Ciudad: {{ pedido.ciudad }}</p>
+    </div>
+  {% elif codigo %}
+    <p>No encontramos un pedido con ese código.</p>
+  {% endif %}
+</div>
+{% endblock %}

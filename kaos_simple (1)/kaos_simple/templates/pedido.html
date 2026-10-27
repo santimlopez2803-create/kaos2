@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block titulo %}Datos de entrega — KAOS{% endblock %}
+{% block contenido %}
+<div class="pagina">
+  <h1>Datos de entrega</h1>
+  <form class="caja" method="post">
+    <label>Nombre completo</label>
+    <input name="nombre" required value="{{ usuario.nombre if usuario }}">
+    <label>Correo</label>
+    <input type="email" name="email" required value="{{ usuario.email if usuario }}">
+    <label>Teléfono</label>
+    <input name="telefono" required>
+    <label>Dirección</label>
+    <input name="direccion" required>
+    <label>Ciudad</label>
+    <select name="ciudad"><option>Barranquilla</option><option>Bogotá</option><option>Medellín</option><option>Cali</option></select>
+    <label>Método de pago</label>
+    <select name="pago"><option>Tarjeta</option><option>PSE</option><option>Contraentrega</option></select>
+    <div class="total"><span>Total a pagar</span><span>{{ carrito.total()|cop }}</span></div>
+    <button class="boton" type="submit">Confirmar pedido</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block titulo %}Mi panel — KAOS{% endblock %}
+{% block contenido %}
+<div class="contenedor" style="padding-top:30px">
+  <h1>{{ 'Panel de administración' if usuario.es_admin() else 'Mi cuenta' }}</h1>
+
+  <div class="resumen">
+    <div><strong>{{ pedidos|length }}</strong>{{ 'Pedidos' if usuario.es_admin() else 'Mis pedidos' }}</div>
+    {% if usuario.es_admin() %}
+      <div><strong>{{ productos|length }}</strong>Productos</div>
+      <div><strong>{{ usuarios|length }}</strong>Usuarios</div>
+    {% else %}
+      <div><strong>{{ disenos|length }}</strong>Mis diseños</div>
+    {% endif %}
+  </div>
+
+  <h2>{{ 'Pedidos' if usuario.es_admin() else 'Mis pedidos' }}</h2>
+  <table>
+    <tr><th>Código</th><th>Productos</th><th>Total</th><th>Estado</th></tr>
+    {% for p in pedidos %}
+      <tr>
+        <td>{{ p.codigo }}</td><td>{{ p.resumen() }}</td><td>{{ p.total|cop }}</td>
+        <td>
+          {% if usuario.es_admin() %}
+            <form method="post" action="{{ url_for('cambiar_estado', id=p.id) }}">
+              <select name="estado">
+                {% for e in estados %}<option {{ 'selected' if e == p.estado }}>{{ e }}</option>{% endfor %}
+              </select>
+              <button>Guardar</button>
+            </form>
+          {% else %}{{ p.estado }}{% endif %}
+        </td>
+      </tr>
+    {% else %}
+      <tr><td colspan="4">Todavía no hay pedidos.</td></tr>
+    {% endfor %}
+  </table>
+
+  {% if usuario.es_admin() %}
+    <h2>Inventario</h2>
+    <table>
+      <tr><th>Producto</th><th>Categoría</th><th>Precio</th><th>Oferta</th><th>Stock</th></tr>
+      {% for p in productos %}
+        <tr>
+          <td>{{ p.nombre }}</td><td>{{ p.categoria }}</td>
+          <td>
+            <form method="post" action="{{ url_for('cambiar_precio', id=p.id) }}">
+              <input type="number" name="precio" min="1" step="100" value="{{ p.precio }}" style="width:100px">
+              <button>Guardar</button>
+            </form>
+            {% if p.en_oferta() %}<del>{{ p.precio_anterior|cop }}</del>{% endif %}
+          </td>
+          <td>
+            <form method="post" action="{{ url_for('cambiar_oferta', id=p.id) }}">
+              <input type="number" name="descuento" min="1" max="90" placeholder="%" style="width:70px" required>
+              <button>{{ 'Cambiar' if p.en_oferta() else 'Poner en oferta' }}</button>
+              {% if p.en_oferta() %}<button name="accion" value="quitar" formnovalidate>Quitar</button>{% endif %}
+            </form>
+          </td>
+          <td>
+            <form method="post" action="{{ url_for('cambiar_stock', id=p.id) }}">
+              <input type="number" name="stock" min="0" value="{{ p.stock }}" style="width:80px">
+              <button>Guardar</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+
+    <h2>Usuarios</h2>
+    <table>
+      <tr><th>Nombre</th><th>Correo</th><th>Rol</th></tr>
+      {% for u in usuarios %}<tr><td>{{ u.nombre }}</td><td>{{ u.email }}</td><td>{{ u.rol }}</td></tr>{% endfor %}
+    </table>
+  {% else %}
+    <h2>Mis diseños</h2>
+    <table>
+      <tr><th>Producto</th><th>Color</th><th>Frase</th><th>Fecha</th></tr>
+      {% for d in disenos %}
+        <tr><td>{{ d.producto }}</td><td>{{ d.color }}</td><td>{{ d.texto or d.grafico }}</td><td>{{ d.fecha.strftime('%d/%m/%Y') }}</td></tr>
+      {% else %}
+        <tr><td colspan="4">Aún no has creado diseños.</td></tr>
+      {% endfor %}
+    </table>
+  {% endif %}
+</div>
+{% endblock %}

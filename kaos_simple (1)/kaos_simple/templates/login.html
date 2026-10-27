@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block titulo %}Ingresar — KAOS{% endblock %}
+{% block contenido %}
+<div class="pagina" style="max-width:460px">
+  <h1>Ingresar</h1>
+  <form class="caja" method="post">
+    <label>Correo</label>
+    <input type="email" name="email" required>
+    <label>Contraseña</label>
+    <input type="password" name="clave" required>
+    <button class="boton" type="submit">Entrar</button>
+    <p>¿No tienes cuenta? <a href="{{ url_for('registro') }}"><b>Regístrate</b></a></p>
+    <small>Pruebas: admin@kaos.co o cliente@kaos.co — clave kaos1234</small>
+  </form>
+</div>
+{% endblock %}
